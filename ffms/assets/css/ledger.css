@@ -1,0 +1,875 @@
+/* ============================================================================
+   FFMS: Field Ledger Design System
+   A tactile physical farm record book aesthetic for Zambian agriculture.
+   ============================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=IBM+Plex+Mono:wght@400;500;600;700&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+:root {
+    /* Paper & Ledger Line Tones */
+    --paper-bg: #fbf8f1;
+    --paper-subtle: #f4ede0;
+    --paper-card: #ffffff;
+    --paper-card-alt: #fcfbfa;
+    --ledger-line: rgba(184, 168, 144, 0.22);
+    --border-rule: #dbd2c2;
+    --border-strong: #968974;
+
+    /* Inks */
+    --ink-primary: #241e17;
+    --ink-muted: #5e5446;
+    --ink-faint: #968a78;
+
+    /* Authentic Rubber Stamp Inks */
+    --stamp-green: #23592c;
+    --stamp-green-bg: rgba(35, 89, 44, 0.08);
+    --stamp-amber: #945d00;
+    --stamp-amber-bg: rgba(148, 93, 0, 0.08);
+    --stamp-red: #a32d2d;
+    --stamp-red-bg: rgba(163, 45, 45, 0.08);
+    --stamp-navy: #1f3b58;
+    --stamp-navy-bg: rgba(31, 59, 88, 0.08);
+    --stamp-dark: #3a3835;
+    --stamp-dark-bg: rgba(58, 56, 53, 0.08);
+    --stamp-ochre: #8b5a2b;
+    --stamp-ochre-bg: rgba(139, 90, 43, 0.08);
+
+    /* Farm Leather & Binding Accents */
+    --binder-spine: #3a2e22;
+    --binder-accent: #c48b47;
+    --binder-brass: #d4a359;
+
+    /* Typography */
+    --font-heading: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-body: 'Work Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'SF Mono', Consolas, monospace;
+
+    /* Spacing & Elevation */
+    --radius-sm: 2px;
+    --radius-md: 4px;
+    --shadow-ledger: 0 2px 5px rgba(36, 30, 23, 0.04), 0 1px 2px rgba(36, 30, 23, 0.06);
+    --shadow-binder: 0 4px 14px rgba(36, 30, 23, 0.08);
+}
+
+/* --------------------------------------------------------------------------
+   Global Document Setup & Ruled Paper Texture
+   -------------------------------------------------------------------------- */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--paper-bg);
+    /* Faint accounting ledger horizontal ruling (28px height) */
+    background-image: linear-gradient(180deg, var(--ledger-line) 1px, transparent 1px);
+    background-size: 100% 28px;
+    color: var(--ink-primary);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.65;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+h1, h2, h3, h4, h5 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    color: var(--ink-primary);
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+}
+
+h1 { font-size: 2.1rem; margin-bottom: 0.5rem; }
+h2 { font-size: 1.55rem; margin-bottom: 0.4rem; }
+h3 { font-size: 1.2rem; margin-bottom: 0.3rem; }
+
+p {
+    margin-bottom: 0.85rem;
+}
+
+a {
+    color: var(--stamp-navy);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: rgba(31, 59, 88, 0.4);
+    transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+
+a:hover {
+    color: var(--stamp-green);
+    text-decoration-color: var(--stamp-green);
+}
+
+.mono {
+    font-family: var(--font-mono);
+}
+
+/* --------------------------------------------------------------------------
+   Layout Containers
+   -------------------------------------------------------------------------- */
+.ledger-container {
+    width: 100%;
+    max-width: 1220px;
+    margin: 0 auto;
+    padding: 24px 20px;
+    flex: 1;
+}
+
+.ledger-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* --------------------------------------------------------------------------
+   Physical Binder Header & Folio Top Bar
+   -------------------------------------------------------------------------- */
+.binder-topbar {
+    background: var(--binder-spine);
+    color: #f7f3eb;
+    border-bottom: 3px solid var(--binder-accent);
+    padding: 6px 20px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.binder-topbar a {
+    color: #e6dfd1;
+    text-decoration: none;
+}
+.binder-topbar a:hover {
+    color: #ffffff;
+}
+
+.binder-header {
+    background: #ffffff;
+    border-bottom: 2px solid var(--border-rule);
+    box-shadow: var(--shadow-binder);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-inner {
+    max-width: 1220px;
+    margin: 0 auto;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand-area {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.brand-area:hover {
+    text-decoration: none;
+}
+
+.ledger-seal {
+    width: 44px;
+    height: 44px;
+    border: 2px dashed var(--binder-spine);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--stamp-green);
+    background: var(--paper-bg);
+    transform: rotate(-5deg);
+    flex-shrink: 0;
+}
+
+.brand-title {
+    font-family: var(--font-heading);
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: var(--ink-primary);
+    line-height: 1.1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.brand-tagline {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Navigation Tabs (Physical Ledger Dividers) */
+.ledger-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    list-style: none;
+}
+
+.ledger-nav a {
+    display: inline-block;
+    padding: 8px 13px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--ink-muted);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    transition: all 0.15s ease;
+}
+
+.ledger-nav a:hover {
+    color: var(--ink-primary);
+    background: var(--paper-subtle);
+    border-color: var(--border-rule);
+}
+
+.ledger-nav a.active {
+    color: var(--ink-primary);
+    background: var(--paper-subtle);
+    border-color: var(--border-strong);
+    border-bottom: 2px solid var(--stamp-green);
+    font-weight: 600;
+}
+
+.user-folio-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--paper-subtle);
+    border: 1px solid var(--border-rule);
+    padding: 5px 12px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 12px;
+}
+
+.user-folio-pill .user-name {
+    font-weight: 600;
+    color: var(--ink-primary);
+}
+
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: 1px solid var(--border-strong);
+    padding: 6px 10px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+}
+
+/* --------------------------------------------------------------------------
+   Ledger Cards & Folios
+   -------------------------------------------------------------------------- */
+.ledger-card {
+    background: var(--paper-card);
+    border: 1px solid var(--border-rule);
+    border-left: 6px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 24px;
+    box-shadow: var(--shadow-ledger);
+    position: relative;
+    overflow: hidden;
+}
+
+.ledger-card.border-green { border-left-color: var(--stamp-green); }
+.ledger-card.border-amber { border-left-color: var(--stamp-amber); }
+.ledger-card.border-red   { border-left-color: var(--stamp-red); }
+.ledger-card.border-navy  { border-left-color: var(--stamp-navy); }
+.ledger-card.border-ochre { border-left-color: var(--stamp-ochre); }
+
+.card-header-ruled {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px dashed var(--border-rule);
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+    position: relative;
+}
+
+.folio-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-muted);
+    letter-spacing: 0.08em;
+    background: var(--paper-subtle);
+    padding: 3px 8px;
+    border: 1px solid var(--border-rule);
+    border-radius: 2px;
+    text-transform: uppercase;
+}
+
+/* --------------------------------------------------------------------------
+   Ink-Stamp Badges (Rotated, Distressed, Bordered)
+   -------------------------------------------------------------------------- */
+.stamp-badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 3px 7px;
+    border: 1.5px dashed currentColor;
+    border-radius: 2px;
+    transform: rotate(-2.5deg);
+    line-height: 1.2;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.stamp-badge:hover {
+    transform: rotate(0deg);
+}
+
+.stamp-green {
+    color: var(--stamp-green);
+    background: var(--stamp-green-bg);
+}
+
+.stamp-amber {
+    color: var(--stamp-amber);
+    background: var(--stamp-amber-bg);
+}
+
+.stamp-red {
+    color: var(--stamp-red);
+    background: var(--stamp-red-bg);
+}
+
+.stamp-navy {
+    color: var(--stamp-navy);
+    background: var(--stamp-navy-bg);
+}
+
+.stamp-ochre {
+    color: var(--stamp-ochre);
+    background: var(--stamp-ochre-bg);
+}
+
+.stamp-dark {
+    color: var(--stamp-dark);
+    background: var(--stamp-dark-bg);
+}
+
+.stamp-neutral {
+    color: var(--ink-muted);
+    background: var(--paper-subtle);
+}
+
+/* Large decorative ledger stamp for alerts/headers */
+.ledger-stamp {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border: 2px solid currentColor;
+    border-radius: 3px;
+    transform: rotate(-3deg);
+    margin-bottom: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   KPI Metric Folios (Dashboard Top Stats)
+   -------------------------------------------------------------------------- */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.kpi-card {
+    background: #ffffff;
+    border: 1px solid var(--border-rule);
+    border-top: 4px solid var(--border-strong);
+    padding: 16px 18px;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-ledger);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.kpi-card.top-green { border-top-color: var(--stamp-green); }
+.kpi-card.top-amber { border-top-color: var(--stamp-amber); }
+.kpi-card.top-navy  { border-top-color: var(--stamp-navy); }
+.kpi-card.top-red   { border-top-color: var(--stamp-red); }
+.kpi-card.top-ochre { border-top-color: var(--stamp-ochre); }
+
+.kpi-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+}
+
+.kpi-value {
+    font-family: var(--font-heading);
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: var(--ink-primary);
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.kpi-sub {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--ink-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Ruled Ledger Tables
+   -------------------------------------------------------------------------- */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--border-rule);
+    border-radius: var(--radius-sm);
+    background: #ffffff;
+    margin: 14px 0;
+}
+
+.ledger-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    text-align: left;
+}
+
+.ledger-table th {
+    background: var(--paper-subtle);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-primary);
+    padding: 10px 14px;
+    border-bottom: 2px solid var(--border-strong);
+    border-right: 1px solid var(--border-rule);
+    white-space: nowrap;
+}
+
+.ledger-table th:last-child {
+    border-right: none;
+}
+
+.ledger-table td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border-rule);
+    border-right: 1px solid var(--border-rule);
+    vertical-align: middle;
+}
+
+.ledger-table td:last-child {
+    border-right: none;
+}
+
+.ledger-table tbody tr:nth-child(even) {
+    background: var(--paper-card-alt);
+}
+
+.ledger-table tbody tr:hover {
+    background: #fbf7ee;
+}
+
+.ledger-table .col-mono {
+    font-family: var(--font-mono);
+    font-size: 13px;
+}
+
+.ledger-table .col-right {
+    text-align: right;
+}
+
+/* --------------------------------------------------------------------------
+   Forms & Ruled Inputs
+   -------------------------------------------------------------------------- */
+.ledger-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-group label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.form-group label .required {
+    color: var(--stamp-red);
+    margin-left: 2px;
+}
+
+.form-control {
+    font-family: var(--font-body);
+    font-size: 14.5px;
+    color: var(--ink-primary);
+    background: #ffffff;
+    border: 1.5px solid var(--border-rule);
+    border-radius: var(--radius-sm);
+    padding: 9px 12px;
+    transition: all 0.15s ease;
+    width: 100%;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--binder-accent);
+    box-shadow: 0 0 0 2px rgba(196, 139, 71, 0.2);
+    background: #fffdfa;
+}
+
+.form-control.input-mono {
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 85px;
+    line-height: 1.5;
+}
+
+.form-hint {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+}
+
+/* Buttons */
+.ledger-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--paper-subtle);
+    border: 1.5px solid var(--border-strong);
+    color: var(--ink-primary);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 8px 18px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 1px 2px 0 rgba(36, 30, 23, 0.15);
+    transition: all 0.15s ease;
+}
+
+.ledger-btn:hover {
+    background: #ffffff;
+    border-color: var(--ink-primary);
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 1px 3px 0 rgba(36, 30, 23, 0.2);
+}
+
+.ledger-btn:active {
+    transform: translateY(1px);
+    box-shadow: none;
+}
+
+.ledger-btn-primary {
+    background: var(--stamp-green);
+    border-color: #1a4220;
+    color: #ffffff !important;
+}
+.ledger-btn-primary:hover {
+    background: #1e4a24;
+    border-color: #123017;
+}
+
+.ledger-btn-danger {
+    background: var(--stamp-red);
+    border-color: #792020;
+    color: #ffffff !important;
+}
+.ledger-btn-danger:hover {
+    background: #872323;
+}
+
+.ledger-btn-sm {
+    padding: 4px 10px;
+    font-size: 11.5px;
+}
+
+/* --------------------------------------------------------------------------
+   Physical Flash Bookmark Alerts
+   -------------------------------------------------------------------------- */
+.ledger-flash {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #ffffff;
+    border: 1px solid var(--border-rule);
+    border-left: 5px solid var(--border-strong);
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-ledger);
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.ledger-flash .flash-tag {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+}
+
+.flash-green { border-left-color: var(--stamp-green); }
+.flash-green .flash-tag { color: var(--stamp-green); }
+
+.flash-amber { border-left-color: var(--stamp-amber); }
+.flash-amber .flash-tag { color: var(--stamp-amber); }
+
+.flash-red   { border-left-color: var(--stamp-red); }
+.flash-red .flash-tag { color: var(--stamp-red); }
+
+.flash-navy  { border-left-color: var(--stamp-navy); }
+.flash-navy .flash-tag { color: var(--stamp-navy); }
+
+/* --------------------------------------------------------------------------
+   Weather Ledger Widget
+   -------------------------------------------------------------------------- */
+.weather-widget {
+    background: #ffffff;
+    border: 1px solid var(--border-rule);
+    border-left: 5px solid var(--stamp-navy);
+    border-radius: var(--radius-sm);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-ledger);
+}
+
+.weather-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed var(--border-rule);
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+}
+
+.weather-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 20px;
+    align-items: center;
+}
+
+.weather-temp-block {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.weather-temp {
+    font-family: var(--font-heading);
+    font-size: 2.6rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--stamp-navy);
+}
+
+.weather-unit {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    color: var(--ink-muted);
+}
+
+.weather-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 10px;
+}
+
+.weather-detail-item {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+}
+
+.weather-detail-item .label {
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    display: block;
+}
+
+.weather-detail-item .val {
+    font-weight: 600;
+    color: var(--ink-primary);
+}
+
+/* --------------------------------------------------------------------------
+   Community Forum Ledger Cards
+   -------------------------------------------------------------------------- */
+.community-thread {
+    background: #ffffff;
+    border: 1px solid var(--border-rule);
+    border-left: 5px solid var(--stamp-ochre);
+    border-radius: var(--radius-sm);
+    padding: 20px;
+    box-shadow: var(--shadow-ledger);
+    margin-bottom: 16px;
+}
+
+.community-meta {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--ink-muted);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.community-reply {
+    background: var(--paper-subtle);
+    border-left: 3px solid var(--border-strong);
+    padding: 14px 18px;
+    margin-top: 14px;
+    border-radius: var(--radius-sm);
+}
+
+/* --------------------------------------------------------------------------
+   Ledger Folio Footer
+   -------------------------------------------------------------------------- */
+.ledger-footer {
+    background: var(--paper-subtle);
+    border-top: 2px solid var(--border-rule);
+    margin-top: 40px;
+    padding: 24px 20px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-muted);
+}
+
+.footer-inner {
+    max-width: 1220px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+/* --------------------------------------------------------------------------
+   Print Stylesheet (Prints authentic clean binder pages)
+   -------------------------------------------------------------------------- */
+@media print {
+    body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        font-size: 12pt;
+    }
+    .binder-topbar,
+    .binder-header,
+    .ledger-footer,
+    .ledger-btn,
+    .no-print {
+        display: none !important;
+    }
+    .ledger-container {
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+    .ledger-card {
+        box-shadow: none !important;
+        border: 1px solid #333 !important;
+        border-left: 6pt solid #000 !important;
+        page-break-inside: avoid;
+        margin-bottom: 20pt;
+    }
+    .stamp-badge {
+        transform: none !important;
+        border: 1pt solid #000 !important;
+        color: #000 !important;
+        background: transparent !important;
+    }
+    .table-responsive {
+        border: 1pt solid #333 !important;
+    }
+    .ledger-table th, .ledger-table td {
+        border: 1pt solid #444 !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Design
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+    .header-inner {
+        flex-wrap: wrap;
+        gap: 14px;
+    }
+    .mobile-menu-btn {
+        display: block;
+    }
+    .ledger-nav {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        border-top: 1px dashed var(--border-rule);
+        padding-top: 12px;
+        margin-top: 10px;
+    }
+    .ledger-nav.open {
+        display: flex;
+    }
+    .ledger-nav a {
+        padding: 10px 14px;
+    }
+    .weather-grid {
+        grid-template-columns: 1fr;
+    }
+}
