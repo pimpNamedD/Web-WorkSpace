@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 // Fetch fields for active farm
 $stmt_fields = $pdo->prepare('
     SELECT fld.*, 
-           (SELECT COUNT(*) FROM crops c WHERE c.field_name = fld.name OR c.field_id = fld.id) as crop_count
+           (SELECT COUNT(*) FROM crops c WHERE c.field_id = fld.id OR c.field_name COLLATE utf8mb4_unicode_ci = fld.name) as crop_count
     FROM fields fld
     WHERE fld.farm_id = ?
     ORDER BY fld.size_hectares DESC, fld.id ASC
