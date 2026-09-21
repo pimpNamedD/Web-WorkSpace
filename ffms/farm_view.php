@@ -79,12 +79,17 @@ include __DIR__ . '/includes/header.php';
         <?php endif; ?>
 
         <!-- Action Ribbon -->
-        <div style="display: flex; gap: 10px; flex-wrap: wrap; border-top: 1px dashed var(--border-rule); padding-top: 12px;">
-            <a href="crop_add.php?farm_id=<?php echo (int)$farm['id']; ?>" class="ledger-btn ledger-btn-sm ledger-btn-primary">+ Add Crop Block</a>
-            <a href="livestock_add.php?farm_id=<?php echo (int)$farm['id']; ?>" class="ledger-btn ledger-btn-sm">+ Register Livestock</a>
-            <a href="activities.php?farm_id=<?php echo (int)$farm['id']; ?>" class="ledger-btn ledger-btn-sm">+ Log Activity</a>
-            <a href="input_add.php?farm_id=<?php echo (int)$farm['id']; ?>" class="ledger-btn ledger-btn-sm">+ Record Input Purchase</a>
-            <a href="workers.php?farm_id=<?php echo (int)$farm['id']; ?>" class="ledger-btn ledger-btn-sm">Workers &amp; Points</a>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; border-top: 1px dashed var(--border-rule); padding-top: 12px;">
+            <a href="crop_add.php?farm_id=<?php echo (int)$farm['id']; ?>" class="ledger-btn ledger-btn-sm ledger-btn-primary">+ Add Crop</a>
+            <a href="livestock_add.php?farm_id=<?php echo (int)$farm['id']; ?>" class="ledger-btn ledger-btn-sm">+ Livestock</a>
+            <a href="farm_fields.php?farm_id=<?php echo (int)$farm['id']; ?>" class="ledger-btn ledger-btn-sm">Field Parcels &amp; Map</a>
+            <a href="carbon.php?farm_id=<?php echo (int)$farm['id']; ?>" class="ledger-btn ledger-btn-sm">Carbon Audit</a>
+            <a href="tokens.php?farm_id=<?php echo (int)$farm['id']; ?>" class="ledger-btn ledger-btn-sm">Token Wallet</a>
+            <a href="traceability.php?farm_id=<?php echo (int)$farm['id']; ?>" class="ledger-btn ledger-btn-sm">Traceability</a>
+            <a href="inventory.php?farm_id=<?php echo (int)$farm['id']; ?>" class="ledger-btn ledger-btn-sm">Stores Inventory</a>
+            <a href="finances.php?farm_id=<?php echo (int)$farm['id']; ?>" class="ledger-btn ledger-btn-sm">Financial Accounts</a>
+            <a href="input_add.php?farm_id=<?php echo (int)$farm['id']; ?>" class="ledger-btn ledger-btn-sm">+ Record Input</a>
+            <a href="workers.php?farm_id=<?php echo (int)$farm['id']; ?>" class="ledger-btn ledger-btn-sm">Crew &amp; Points</a>
         </div>
     </div>
 

@@ -81,6 +81,7 @@ include __DIR__ . '/includes/header.php';
             </div>
             <div style="display: flex; gap: 8px; align-items: center;">
                 <a href="crop_add.php" class="ledger-btn ledger-btn-primary">+ Record New Planting</a>
+                <a href="ai_twin.php" class="ledger-btn ledger-btn-sm">AI Crop Twin Simulator &rarr;</a>
             </div>
         </div>
 
@@ -175,9 +176,12 @@ include __DIR__ . '/includes/header.php';
                                 <?php endif; ?>
                             </td>
                             <td><?php echo render_stamp_badge($c['status']); ?></td>
-                            <td>
+                            <td style="white-space: nowrap;">
                                 <a href="crop_edit.php?id=<?php echo (int)$c['id']; ?>" class="ledger-btn ledger-btn-sm">
                                     <?php echo ($c['status'] === 'growing') ? 'Harvest / Edit' : 'Edit'; ?>
+                                </a>
+                                <a href="ai_twin.php?crop_id=<?php echo (int)$c['id']; ?>" class="ledger-btn ledger-btn-sm" style="font-size: 11px;">
+                                    AI Twin
                                 </a>
                             </td>
                         </tr>

@@ -20,7 +20,7 @@ $stmt_farms->execute([$user_id]);
 $farms = $stmt_farms->fetchAll();
 $farm_ids = array_column($farms, 'id');
 
-// Active selected farm for weather widget (or first farm)
+// Active selected farm for widgets (or first farm)
 $active_farm_id = isset($_GET['farm_id']) ? (int)$_GET['farm_id'] : ($farms[0]['id'] ?? 0);
 $active_farm = null;
 foreach ($farms as $f) {
@@ -43,6 +43,12 @@ $kpis = [
     'total_inputs_zmw' => 0.0
 ];
 
+$fin_summary = ['income' => 0.0, 'expense' => 0.0, 'net' => 0.0];
+$low_stock_items = [];
+$primary_twin_crop = null;
+$carbon_summary = null;
+$token_balance = 0;
+
 if (!empty($farm_ids)) {
     $in_placeholders = implode(',', array_fill(0, count($farm_ids), '?'));
 
@@ -56,7 +62,7 @@ if (!empty($farm_ids)) {
     $stmt_ls->execute($farm_ids);
     $kpis['livestock_head'] = (int)$stmt_ls->fetchColumn();
 
-    // Harvested yield (kg) this year / season
+    // Harvested yield (kg)
     $stmt_hy = $pdo->prepare("SELECT COALESCE(SUM(actual_yield_kg), 0) FROM crops WHERE farm_id IN ($in_placeholders) AND status = 'harvested'");
     $stmt_hy->execute($farm_ids);
     $kpis['harvested_kg'] = (float)$stmt_hy->fetchColumn();
@@ -65,15 +71,45 @@ if (!empty($farm_ids)) {
     $stmt_inp = $pdo->prepare("SELECT COALESCE(SUM(cost_zmw), 0) FROM input_purchases WHERE farm_id IN ($in_placeholders) AND payment_status = 'completed'");
     $stmt_inp->execute($farm_ids);
     $kpis['total_inputs_zmw'] = (float)$stmt_inp->fetchColumn();
+
+    // Financial accounts P&L
+    $stmt_fin = $pdo->prepare("SELECT type, SUM(amount) as total FROM financial_transactions WHERE farm_id IN ($in_placeholders) GROUP BY type");
+    $stmt_fin->execute($farm_ids);
+    while ($row = $stmt_fin->fetch()) {
+        if ($row['type'] === 'income') $fin_summary['income'] = (float)$row['total'];
+        if ($row['type'] === 'expense') $fin_summary['expense'] = (float)$row['total'];
+    }
+    $fin_summary['net'] = $fin_summary['income'] - $fin_summary['expense'];
+
+    // Low stock alerts
+    $stmt_low = $pdo->prepare("SELECT name, quantity, unit, low_stock_threshold FROM inventory_items WHERE farm_id IN ($in_placeholders) AND quantity <= low_stock_threshold ORDER BY quantity ASC LIMIT 3");
+    $stmt_low->execute($farm_ids);
+    $low_stock_items = $stmt_low->fetchAll();
+
+    // Primary AI Digital Twin crop
+    $stmt_ptc = $pdo->prepare("SELECT c.*, f.farm_name FROM crops c JOIN farms f ON c.farm_id = f.id WHERE c.farm_id IN ($in_placeholders) AND c.status = 'growing' ORDER BY c.id ASC LIMIT 1");
+    $stmt_ptc->execute($farm_ids);
+    $primary_twin_crop = $stmt_ptc->fetch();
 }
 
-// 3. Weather for the active farm
+// 3. Carbon footprint and Token balance for active farm
+if ($active_farm) {
+    $stmt_carb = $pdo->prepare('SELECT * FROM carbon_footprints WHERE farm_id = ? ORDER BY calculated_at DESC LIMIT 1');
+    $stmt_carb->execute([$active_farm_id]);
+    $carbon_summary = $stmt_carb->fetch();
+
+    $stmt_tok = $pdo->prepare('SELECT COALESCE(SUM(amount), 0) FROM token_transactions WHERE farm_id = ?');
+    $stmt_tok->execute([$active_farm_id]);
+    $token_balance = (int)$stmt_tok->fetchColumn();
+}
+
+// 4. Weather for the active farm
 $weather_data = null;
 if ($active_farm) {
     $weather_data = get_farm_weather($pdo, $active_farm);
 }
 
-// 4. Recent activity feed across all user's farms
+// 5. Recent activity feed
 $recent_activities = [];
 if (!empty($farm_ids)) {
     $stmt_act = $pdo->prepare("
@@ -88,7 +124,7 @@ if (!empty($farm_ids)) {
     $recent_activities = $stmt_act->fetchAll();
 }
 
-// 5. Active crops sample table
+// 6. Active crops sample table
 $active_crops = [];
 if (!empty($farm_ids)) {
     $stmt_ac = $pdo->prepare("
@@ -116,7 +152,7 @@ include __DIR__ . '/includes/header.php';
                 <span class="folio-tag">FOLIO SUMMARY &bull; <?php echo strtoupper(date('F Y')); ?></span>
                 <h1 style="margin-top: 6px;"><?php echo sanitize($user['full_name']); ?>'s Farm Records</h1>
                 <p style="color: var(--ink-muted); margin-bottom: 0; font-size: 14px;">
-                    Agricultural Ledger for <?php echo sanitize($user['location_district']); ?> District holdings. All folios verified and balanced.
+                    Agricultural Ledger for <?php echo sanitize($user['location_district']); ?> District holdings. All accounts and environmental folios balanced.
                 </p>
             </div>
             <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
@@ -128,12 +164,27 @@ include __DIR__ . '/includes/header.php';
         </div>
 
         <!-- Quick Ledger Action Buttons -->
-        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px;">
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px;">
             <a href="input_add.php" class="ledger-btn ledger-btn-primary ledger-btn-sm">
                 + Record Input (MoMo/Cash)
             </a>
-            <a href="activities.php" class="ledger-btn ledger-btn-sm">
-                + Log Farm Activity
+            <a href="ai_twin.php" class="ledger-btn ledger-btn-sm">
+                AI Crop Twin
+            </a>
+            <a href="carbon.php" class="ledger-btn ledger-btn-sm">
+                Carbon Accounting
+            </a>
+            <a href="tokens.php" class="ledger-btn ledger-btn-sm">
+                Token Wallet
+            </a>
+            <a href="traceability.php" class="ledger-btn ledger-btn-sm">
+                Traceability
+            </a>
+            <a href="finances.php" class="ledger-btn ledger-btn-sm">
+                Finances &amp; P&amp;L
+            </a>
+            <a href="inventory.php" class="ledger-btn ledger-btn-sm">
+                Stores Inventory
             </a>
             <a href="crop_add.php" class="ledger-btn ledger-btn-sm">
                 + Add Crop Block
@@ -141,44 +192,181 @@ include __DIR__ . '/includes/header.php';
             <a href="livestock_add.php" class="ledger-btn ledger-btn-sm">
                 + Register Livestock
             </a>
-            <a href="farms.php" class="ledger-btn ledger-btn-sm">
-                Manage Farm Holdings
-            </a>
         </div>
     </div>
 
+    <!-- Low Stock Alert Banner (if any) -->
+    <?php if (!empty($low_stock_items)): ?>
+    <div style="background: #fff8f8; border: 1px solid #e0b4b4; border-left: 5px solid var(--stamp-red); padding: 12px 16px; border-radius: 2px; margin-top: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span class="stamp-badge stamp-red" style="font-size: 10px;">[ CRITICAL STOCK ]</span>
+            <div style="font-size: 13.5px; color: var(--stamp-red);">
+                <strong>Depleted stores detected:</strong> 
+                <?php 
+                    $alert_texts = [];
+                    foreach ($low_stock_items as $lsi) {
+                        $alert_texts[] = sanitize($lsi['name']) . " (" . format_qty($lsi['quantity']) . " " . sanitize($lsi['unit']) . " remaining)";
+                    }
+                    echo implode(' &bull; ', $alert_texts);
+                ?>
+            </div>
+        </div>
+        <div>
+            <a href="inventory.php?low_stock=1" class="ledger-btn ledger-btn-sm" style="color: var(--stamp-red); border-color: var(--stamp-red);">
+                Manage Stores &rarr;
+            </a>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <!-- KPI Metric Cards Grid -->
-    <div class="kpi-grid">
+    <div class="kpi-grid" style="margin-top: 16px;">
         <div class="kpi-card top-green">
             <span class="kpi-label">Active Farm Holdings</span>
             <span class="kpi-value"><?php echo $kpis['farms_count']; ?></span>
             <span class="kpi-sub">Registered properties</span>
         </div>
         <div class="kpi-card top-green">
-            <span class="kpi-label">Crops Currently Growing</span>
+            <span class="kpi-label">Crops Growing</span>
             <span class="kpi-value"><?php echo $kpis['crops_growing']; ?></span>
-            <span class="kpi-sub">Fields in season</span>
+            <span class="kpi-sub">Field blocks in season</span>
         </div>
         <div class="kpi-card top-amber">
             <span class="kpi-label">Livestock Head</span>
             <span class="kpi-value"><?php echo number_format($kpis['livestock_head']); ?></span>
-            <span class="kpi-sub">Active animals &amp; poultry</span>
+            <span class="kpi-sub">Active cattle &amp; smallstock</span>
         </div>
         <div class="kpi-card top-navy">
-            <span class="kpi-label">Harvested This Season</span>
-            <span class="kpi-value"><?php echo format_qty($kpis['harvested_kg']); ?></span>
-            <span class="kpi-sub">Kilograms grain/produce</span>
+            <span class="kpi-label">Net Operating Margin</span>
+            <span class="kpi-value mono" style="font-size: 1.45rem; color: <?php echo ($fin_summary['net'] >= 0) ? 'var(--stamp-green)' : 'var(--stamp-red)'; ?>;">
+                <?php echo ($fin_summary['net'] >= 0 ? '+' : '') . format_zmw($fin_summary['net']); ?>
+            </span>
+            <span class="kpi-sub">Revenue K<?php echo number_format($fin_summary['income'], 0); ?> / Costs K<?php echo number_format($fin_summary['expense'], 0); ?></span>
         </div>
         <div class="kpi-card top-ochre">
             <span class="kpi-label">Input Expenditure</span>
-            <span class="kpi-value" style="font-size: 1.6rem;"><?php echo format_zmw($kpis['total_inputs_zmw']); ?></span>
+            <span class="kpi-value" style="font-size: 1.5rem;"><?php echo format_zmw($kpis['total_inputs_zmw']); ?></span>
             <span class="kpi-sub">Completed purchases</span>
         </div>
     </div>
 
-    <!-- Weather Widget Section (Module 3) -->
+    <!-- UNIQUE BLUEPRINT WIDGETS SECTION -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; margin-top: 20px;">
+        
+        <!-- 1. Carbon Accounting Widget (Blueprint CarbonWidget) -->
+        <div class="ledger-card border-green" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                    <div>
+                        <span class="folio-tag">ENVIRONMENTAL SINK</span>
+                        <h3 style="font-size: 1.2rem; margin-top: 2px;">Carbon Footprint Widget</h3>
+                    </div>
+                    <span class="stamp-badge stamp-green" style="font-size: 10px;">[ VCS PROTOCOL ]</span>
+                </div>
+                
+                <?php if ($carbon_summary): ?>
+                <div style="margin: 12px 0;">
+                    <div style="font-size: 12px; color: var(--ink-muted);">Net Farm Carbon Footprint:</div>
+                    <div class="mono" style="font-size: 1.7rem; font-weight: 700; color: <?php echo ((float)$carbon_summary['net_footprint'] <= 0) ? 'var(--stamp-green)' : 'var(--stamp-amber)'; ?>;">
+                        <?php echo number_format((float)$carbon_summary['net_footprint']); ?> <span style="font-size: 13px;">kg CO₂e</span>
+                    </div>
+                    <div style="font-size: 12.5px; color: var(--ink-primary); margin-top: 4px;">
+                        Credits Earned: <strong class="mono" style="color: var(--stamp-green);"><?php echo (int)$carbon_summary['credits_earned']; ?> Credits</strong> 
+                        (Valued at ~<?php echo format_zmw((int)$carbon_summary['credits_earned'] * 1300); ?>)
+                    </div>
+                </div>
+                <?php else: ?>
+                <p style="color: var(--ink-muted); font-size: 13px; margin: 12px 0;">
+                    No certified carbon audit executed yet for <?php echo sanitize($active_farm['farm_name'] ?? 'your farm'); ?>.
+                </p>
+                <?php endif; ?>
+            </div>
+
+            <div style="border-top: 1px dashed var(--border-rule); padding-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <span class="mono" style="font-size: 11px; color: var(--ink-faint);">Holding: <?php echo sanitize($active_farm['farm_name'] ?? ''); ?></span>
+                <a href="carbon.php?farm_id=<?php echo $active_farm_id; ?>" class="ledger-btn ledger-btn-sm">
+                    Recalculate &amp; Audit &rarr;
+                </a>
+            </div>
+        </div>
+
+        <!-- 2. Token Wallet Widget (Blueprint TokenWallet) -->
+        <div class="ledger-card border-ochre" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                    <div>
+                        <span class="folio-tag">WEB3 TREASURY</span>
+                        <h3 style="font-size: 1.2rem; margin-top: 2px;">Token Wallet</h3>
+                    </div>
+                    <span class="stamp-badge stamp-amber" style="font-size: 10px;">[ SMART WALLET ]</span>
+                </div>
+
+                <div style="margin: 12px 0;">
+                    <div style="font-size: 12px; color: var(--ink-muted);">Circulating Token Balance:</div>
+                    <div class="mono" style="font-size: 1.7rem; font-weight: 700; color: var(--stamp-ochre);">
+                        <?php echo number_format($token_balance); ?> <span style="font-size: 13px;">AGRI-TOKENS</span>
+                    </div>
+                    <div style="font-size: 12.5px; color: var(--ink-primary); margin-top: 4px;">
+                        Redeemable for certified seed pockets, PPE boots, fertilizer, and airtime.
+                    </div>
+                </div>
+            </div>
+
+            <div style="border-top: 1px dashed var(--border-rule); padding-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <a href="tokens.php?farm_id=<?php echo $active_farm_id; ?>" class="ledger-btn ledger-btn-primary ledger-btn-sm">
+                    Open Redemption Store &rarr;
+                </a>
+                <a href="workers.php" class="ledger-btn ledger-btn-sm">
+                    Award Crew
+                </a>
+            </div>
+        </div>
+
+        <!-- 3. AI Crop Twin Simulator Widget (Blueprint AITwinSimulator) -->
+        <div class="ledger-card border-navy" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                    <div>
+                        <span class="folio-tag">DIGITAL TWIN ENGINE</span>
+                        <h3 style="font-size: 1.2rem; margin-top: 2px;">AI Crop Twin</h3>
+                    </div>
+                    <span class="stamp-badge stamp-navy" style="font-size: 10px;">[ SIMULATOR ACTIVE ]</span>
+                </div>
+
+                <?php if ($primary_twin_crop): ?>
+                <div style="margin: 12px 0;">
+                    <div style="font-weight: 700; font-size: 14px; color: var(--ink-primary);">
+                        <?php echo sanitize($primary_twin_crop['crop_name']); ?>
+                    </div>
+                    <div style="font-size: 12.5px; color: var(--ink-muted);">
+                        Field: <?php echo sanitize($primary_twin_crop['field_name'] ?: 'Main Block'); ?> (<?php echo format_qty($primary_twin_crop['area_hectares']); ?> ha)
+                    </div>
+                    <div style="margin-top: 6px;">
+                        Predicted Harvest: <strong class="mono" style="color: var(--stamp-green); font-size: 15px;">
+                            <?php echo number_format((float)($primary_twin_crop['yield_predicted'] ?: $primary_twin_crop['expected_yield_kg'])); ?> kg
+                        </strong>
+                    </div>
+                </div>
+                <?php else: ?>
+                <p style="color: var(--ink-muted); font-size: 13px; margin: 12px 0;">
+                    Plant a crop block to activate the real-time AI Crop Twin simulator.
+                </p>
+                <?php endif; ?>
+            </div>
+
+            <div style="border-top: 1px dashed var(--border-rule); padding-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <span class="mono" style="font-size: 11px; color: var(--ink-faint);">Yield Forecasting</span>
+                <a href="ai_twin.php<?php echo $primary_twin_crop ? '?crop_id=' . $primary_twin_crop['id'] : ''; ?>" class="ledger-btn ledger-btn-sm">
+                    Launch Simulator Sliders &rarr;
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Weather Widget Section -->
     <?php if ($active_farm && $weather_data): ?>
-    <div class="weather-widget">
+    <div class="weather-widget" style="margin-top: 20px;">
         <div class="weather-header">
             <div>
                 <span class="folio-tag">METEOROLOGICAL OBSERVATION &bull; OPENWEATHERMAP FREE TIER</span>
@@ -196,7 +384,6 @@ include __DIR__ . '/includes/header.php';
                     <span class="stamp-badge stamp-navy">[ 30-MIN CACHED ]</span>
                 <?php endif; ?>
                 
-                <!-- Farm selector dropdown for weather -->
                 <?php if (count($farms) > 1): ?>
                 <form method="GET" action="dashboard.php" style="display: inline-block;">
                     <select name="farm_id" onchange="this.form.submit()" class="form-control" style="padding: 4px 8px; font-size: 12px; font-family: var(--font-mono);">
@@ -246,17 +433,11 @@ include __DIR__ . '/includes/header.php';
                 </div>
             </div>
         </div>
-
-        <?php if (!empty($weather_data['notice'])): ?>
-        <div style="margin-top: 10px; font-family: var(--font-mono); font-size: 11px; color: var(--stamp-amber); background: var(--stamp-amber-bg); padding: 5px 10px; border-radius: 2px;">
-            <strong>Advisory:</strong> <?php echo sanitize($weather_data['notice']); ?>
-        </div>
-        <?php endif; ?>
     </div>
     <?php endif; ?>
 
     <!-- Two-Column Section: Active Crops and Recent Activity Log -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 24px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 24px; margin-top: 20px;">
 
         <!-- Active Crops Table -->
         <div class="ledger-card border-green">

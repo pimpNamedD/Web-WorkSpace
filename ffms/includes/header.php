@@ -64,12 +64,15 @@ $page_title = $page_title ?? 'Field Ledger Folio';
             <?php if ($user): ?>
             <nav class="ledger-nav" id="ledgerNav">
                 <a href="<?php echo base_url('dashboard.php'); ?>" class="<?php echo active_nav('dashboard.php'); ?>">Dashboard</a>
-                <a href="<?php echo base_url('farms.php'); ?>" class="<?php echo active_nav('farms.php'); ?> <?php echo active_nav('farm_view.php'); ?> <?php echo active_nav('farm_edit.php'); ?>">Farms</a>
-                <a href="<?php echo base_url('crops.php'); ?>" class="<?php echo active_nav('crops.php'); ?> <?php echo active_nav('crop_add.php'); ?> <?php echo active_nav('crop_edit.php'); ?>">Crops</a>
+                <a href="<?php echo base_url('farms.php'); ?>" class="<?php echo active_nav('farms.php'); ?> <?php echo active_nav('farm_view.php'); ?> <?php echo active_nav('farm_edit.php'); ?> <?php echo active_nav('farm_fields.php'); ?>">Farms &amp; Fields</a>
+                <a href="<?php echo base_url('crops.php'); ?>" class="<?php echo active_nav('crops.php'); ?> <?php echo active_nav('crop_add.php'); ?> <?php echo active_nav('crop_edit.php'); ?> <?php echo active_nav('ai_twin.php'); ?>">Crops &amp; AI Twin</a>
+                <a href="<?php echo base_url('inventory.php'); ?>" class="<?php echo active_nav('inventory.php'); ?> <?php echo active_nav('inventory_add.php'); ?> <?php echo active_nav('inputs.php'); ?> <?php echo active_nav('input_add.php'); ?>">Inventory</a>
                 <a href="<?php echo base_url('livestock.php'); ?>" class="<?php echo active_nav('livestock.php'); ?> <?php echo active_nav('livestock_add.php'); ?> <?php echo active_nav('livestock_edit.php'); ?>">Livestock</a>
-                <a href="<?php echo base_url('activities.php'); ?>" class="<?php echo active_nav('activities.php'); ?>">Activity Log</a>
-                <a href="<?php echo base_url('inputs.php'); ?>" class="<?php echo active_nav('inputs.php'); ?> <?php echo active_nav('input_add.php'); ?>">Inputs &amp; MoMo</a>
-                <a href="<?php echo base_url('workers.php'); ?>" class="<?php echo active_nav('workers.php'); ?> <?php echo active_nav('worker_points.php'); ?>">Workers</a>
+                <a href="<?php echo base_url('finances.php'); ?>" class="<?php echo active_nav('finances.php'); ?> <?php echo active_nav('finance_add.php'); ?>">Finances</a>
+                <a href="<?php echo base_url('carbon.php'); ?>" class="<?php echo active_nav('carbon.php'); ?>">Carbon</a>
+                <a href="<?php echo base_url('tokens.php'); ?>" class="<?php echo active_nav('tokens.php'); ?>">Tokens</a>
+                <a href="<?php echo base_url('traceability.php'); ?>" class="<?php echo active_nav('traceability.php'); ?>">Traceability</a>
+                <a href="<?php echo base_url('workers.php'); ?>" class="<?php echo active_nav('workers.php'); ?> <?php echo active_nav('worker_points.php'); ?>">Crew</a>
                 <a href="<?php echo base_url('community.php'); ?>" class="<?php echo active_nav('community.php'); ?> <?php echo active_nav('community_post.php'); ?>">Community</a>
             </nav>
 
