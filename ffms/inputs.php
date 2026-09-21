@@ -89,7 +89,8 @@ include __DIR__ . '/includes/header.php';
                     Track seed, fertilizer, agrochemical, and feed acquisitions with MTN MoMo and Airtel Money sandbox collection records.
                 </p>
             </div>
-            <div style="display: flex; gap: 8px; align-items: center;">
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                <a href="inventory.php" class="ledger-btn ledger-btn-sm">&larr; Stock Inventory</a>
                 <a href="input_add.php" class="ledger-btn ledger-btn-primary">+ Record Input Purchase</a>
             </div>
         </div>

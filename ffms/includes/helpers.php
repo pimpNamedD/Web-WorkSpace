@@ -163,9 +163,9 @@ function display_flash(): string {
 }
 
 /**
- * Returns 'active' class string if current script matches given filename
+ * Returns 'active' class string if current script matches any given filename
  */
-function active_nav(string $filename): string {
+function active_nav(string ...$filenames): string {
     $current = basename($_SERVER['SCRIPT_NAME'] ?? '');
-    return ($current === $filename) ? 'active' : '';
+    return in_array($current, $filenames, true) ? 'active' : '';
 }

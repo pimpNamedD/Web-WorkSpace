@@ -126,9 +126,10 @@ include __DIR__ . '/includes/header.php';
                     Track on-farm stores of seed, fertilizer, agrochemicals, veterinary medicines, and fuel with automated low-stock warnings.
                 </p>
             </div>
-            <div style="display: flex; gap: 8px; align-items: center;">
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
                 <a href="inventory_add.php" class="ledger-btn ledger-btn-primary">+ Register New Stock Item</a>
                 <a href="input_add.php" class="ledger-btn ledger-btn-sm">+ Record Input Purchase</a>
+                <a href="inputs.php" class="ledger-btn ledger-btn-sm">Purchases Log</a>
             </div>
         </div>
 

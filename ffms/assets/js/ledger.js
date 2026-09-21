@@ -1,22 +1,84 @@
 /**
  * FFMS: Field Ledger - Minimal Vanilla JavaScript
- * Zero dependencies, pure native browser APIs.
+ * Zero external dependencies, pure native browser APIs.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Mobile Menu Toggle
+    // 1. Mobile Navigation Drawer Toggle
     const mobileBtn = document.getElementById('mobileMenuBtn');
+    const headerNavBar = document.getElementById('headerNavBar');
     const ledgerNav = document.getElementById('ledgerNav');
-    if (mobileBtn && ledgerNav) {
-        mobileBtn.addEventListener('click', () => {
-            ledgerNav.classList.toggle('open');
-            const isOpen = ledgerNav.classList.contains('open');
-            mobileBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-            mobileBtn.textContent = isOpen ? '[ CLOSE MENU ]' : '[ MENU ]';
+
+    if (mobileBtn && (headerNavBar || ledgerNav)) {
+        const toggleMenu = (forceState) => {
+            const willOpen = typeof forceState === 'boolean' 
+                ? forceState 
+                : !(headerNavBar?.classList.contains('is-open') || ledgerNav?.classList.contains('open'));
+
+            if (headerNavBar) headerNavBar.classList.toggle('is-open', willOpen);
+            if (ledgerNav) ledgerNav.classList.toggle('open', willOpen);
+
+            mobileBtn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+            mobileBtn.innerHTML = willOpen 
+                ? '<span class="menu-icon">&times;</span> [ CLOSE ]' 
+                : '<span class="menu-icon">&equiv;</span> [ MENU ]';
+        };
+
+        mobileBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleMenu();
+        });
+
+        // Close when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 1024) {
+                const isOpen = headerNavBar?.classList.contains('is-open');
+                if (isOpen && !headerNavBar.contains(e.target) && !mobileBtn.contains(e.target)) {
+                    toggleMenu(false);
+                }
+            }
+        });
+
+        // Close on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && headerNavBar?.classList.contains('is-open')) {
+                toggleMenu(false);
+            }
         });
     }
 
-    // 2. Input Purchases - Dynamic Payment Method Phone Field Toggle
+    // 2. Financial Vouchers - Dynamic Category Group Filter (Income vs Expense)
+    const typeSelect = document.getElementById('typeSelect');
+    const categorySelect = document.getElementById('categorySelect');
+    const incomeOptGroup = document.getElementById('incomeOptGroup');
+    const expenseOptGroup = document.getElementById('expenseOptGroup');
+
+    if (typeSelect && categorySelect && incomeOptGroup && expenseOptGroup) {
+        const filterCategories = () => {
+            const flowType = typeSelect.value;
+            const isIncome = flowType === 'income';
+
+            // Toggle optgroup display and option disabled states
+            incomeOptGroup.style.display = isIncome ? '' : 'none';
+            Array.from(incomeOptGroup.options).forEach(opt => opt.disabled = !isIncome);
+
+            expenseOptGroup.style.display = isIncome ? 'none' : '';
+            Array.from(expenseOptGroup.options).forEach(opt => opt.disabled = isIncome);
+
+            // If current selected option is disabled, select first visible option
+            if (categorySelect.selectedOptions.length === 0 || categorySelect.selectedOptions[0].disabled) {
+                const targetGroup = isIncome ? incomeOptGroup : expenseOptGroup;
+                if (targetGroup.options.length > 0) {
+                    categorySelect.value = targetGroup.options[0].value;
+                }
+            }
+        };
+
+        typeSelect.addEventListener('change', filterCategories);
+        filterCategories(); // Initial sync on load
+    }
+
+    // 3. Input Purchases - Dynamic Payment Method Phone Field Toggle
     const paymentSelect = document.getElementById('paymentMethodSelect');
     const phoneGroup = document.getElementById('phoneInputGroup');
     const phoneInput = document.getElementById('paymentPhoneInput');
@@ -56,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updatePhoneVisibility(); // Run on initial page load
     }
 
-    // 3. Confirm Ledger Deletions
+    // 4. Confirm Ledger Deletions
     const deleteButtons = document.querySelectorAll('.confirm-delete');
     deleteButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -67,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 4. Print Ledger Helper
+    // 5. Print Ledger Helper
     const printBtns = document.querySelectorAll('.trigger-print');
     printBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {

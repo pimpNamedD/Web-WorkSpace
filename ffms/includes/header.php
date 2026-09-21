@@ -43,51 +43,88 @@ $page_title = $page_title ?? 'Field Ledger Folio';
         </div>
     </div>
 
-    <!-- Main Navigation Header -->
+    <!-- Main Navigation Header: Two-Tier Physical Binder Folio -->
     <header class="binder-header no-print">
-        <div class="header-inner">
-            <a href="<?php echo $user ? base_url('dashboard.php') : base_url('index.php'); ?>" class="brand-area">
-                <div class="ledger-seal">FL</div>
-                <div>
-                    <div class="brand-title">
-                        FFMS
-                        <span style="font-size: 0.95rem; font-weight: 400; opacity: 0.7;">Field Ledger</span>
+        <!-- Top Tier: Identity, Farmer Folio Pill & Controls -->
+        <div class="header-top-tier">
+            <div class="header-top-inner">
+                <a href="<?php echo $user ? base_url('dashboard.php') : base_url('index.php'); ?>" class="brand-area">
+                    <div class="ledger-seal">FL</div>
+                    <div>
+                        <div class="brand-title">
+                            FFMS
+                            <span class="brand-title-sub">Field Ledger</span>
+                        </div>
+                        <div class="brand-tagline">Farm Management &amp; Crop Logbook</div>
                     </div>
-                    <div class="brand-tagline">Farm Management &amp; Crop Logbook</div>
+                </a>
+
+                <div class="header-top-actions">
+                    <?php if ($user): ?>
+                    <div class="user-folio-pill">
+                        <span class="stamp-badge stamp-green user-district-badge"><?php echo sanitize($user['location_district']); ?></span>
+                        <span class="user-name"><?php echo sanitize($user['full_name']); ?></span>
+                        <a href="<?php echo base_url('logout.php'); ?>" class="signout-link">[ Sign Out ]</a>
+                    </div>
+
+                    <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="menu-icon">&equiv;</span> [ MENU ]
+                    </button>
+                    <?php else: ?>
+                    <div class="guest-actions">
+                        <a href="<?php echo base_url('login.php'); ?>" class="ledger-btn ledger-btn-sm">Sign In</a>
+                        <a href="<?php echo base_url('register.php'); ?>" class="ledger-btn ledger-btn-sm ledger-btn-primary">Open New Ledger</a>
+                    </div>
+                    <?php endif; ?>
                 </div>
-            </a>
-
-            <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-expanded="false" aria-label="Toggle navigation">
-                [ MENU ]
-            </button>
-
-            <?php if ($user): ?>
-            <nav class="ledger-nav" id="ledgerNav">
-                <a href="<?php echo base_url('dashboard.php'); ?>" class="<?php echo active_nav('dashboard.php'); ?>">Dashboard</a>
-                <a href="<?php echo base_url('farms.php'); ?>" class="<?php echo active_nav('farms.php'); ?> <?php echo active_nav('farm_view.php'); ?> <?php echo active_nav('farm_edit.php'); ?> <?php echo active_nav('farm_fields.php'); ?>">Farms &amp; Fields</a>
-                <a href="<?php echo base_url('crops.php'); ?>" class="<?php echo active_nav('crops.php'); ?> <?php echo active_nav('crop_add.php'); ?> <?php echo active_nav('crop_edit.php'); ?> <?php echo active_nav('ai_twin.php'); ?>">Crops &amp; AI Twin</a>
-                <a href="<?php echo base_url('inventory.php'); ?>" class="<?php echo active_nav('inventory.php'); ?> <?php echo active_nav('inventory_add.php'); ?> <?php echo active_nav('inputs.php'); ?> <?php echo active_nav('input_add.php'); ?>">Inventory</a>
-                <a href="<?php echo base_url('livestock.php'); ?>" class="<?php echo active_nav('livestock.php'); ?> <?php echo active_nav('livestock_add.php'); ?> <?php echo active_nav('livestock_edit.php'); ?>">Livestock</a>
-                <a href="<?php echo base_url('finances.php'); ?>" class="<?php echo active_nav('finances.php'); ?> <?php echo active_nav('finance_add.php'); ?>">Finances</a>
-                <a href="<?php echo base_url('carbon.php'); ?>" class="<?php echo active_nav('carbon.php'); ?>">Carbon</a>
-                <a href="<?php echo base_url('tokens.php'); ?>" class="<?php echo active_nav('tokens.php'); ?>">Tokens</a>
-                <a href="<?php echo base_url('traceability.php'); ?>" class="<?php echo active_nav('traceability.php'); ?>">Traceability</a>
-                <a href="<?php echo base_url('workers.php'); ?>" class="<?php echo active_nav('workers.php'); ?> <?php echo active_nav('worker_points.php'); ?>">Crew</a>
-                <a href="<?php echo base_url('community.php'); ?>" class="<?php echo active_nav('community.php'); ?> <?php echo active_nav('community_post.php'); ?>">Community</a>
-            </nav>
-
-            <div class="user-folio-pill">
-                <span class="stamp-badge stamp-green" style="transform:none; font-size:10px;"><?php echo sanitize($user['location_district']); ?></span>
-                <span class="user-name"><?php echo sanitize($user['full_name']); ?></span>
-                <a href="<?php echo base_url('logout.php'); ?>" style="color: var(--stamp-red); font-size: 11px; margin-left: 6px;">[ Sign Out ]</a>
             </div>
-            <?php else: ?>
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <a href="<?php echo base_url('login.php'); ?>" class="ledger-btn ledger-btn-sm">Sign In</a>
-                <a href="<?php echo base_url('register.php'); ?>" class="ledger-btn ledger-btn-sm ledger-btn-primary">Open New Ledger</a>
-            </div>
-            <?php endif; ?>
         </div>
+
+        <!-- Bottom Tier: Labeled Binder Divider Tabs -->
+        <?php if ($user): ?>
+        <nav class="header-nav-bar" id="headerNavBar" aria-label="Farm Ledger Navigation">
+            <div class="header-nav-inner">
+                <div class="ledger-nav" id="ledgerNav">
+                    <a href="<?php echo base_url('dashboard.php'); ?>" class="<?php echo active_nav('dashboard.php'); ?>">
+                        <span class="nav-tab-idx">01</span> Dashboard
+                    </a>
+                    <a href="<?php echo base_url('farms.php'); ?>" class="<?php echo active_nav('farms.php', 'farm_view.php', 'farm_edit.php', 'farm_fields.php'); ?>">
+                        <span class="nav-tab-idx">02</span> Farms &amp; Fields
+                    </a>
+                    <a href="<?php echo base_url('crops.php'); ?>" class="<?php echo active_nav('crops.php', 'crop_add.php', 'crop_edit.php', 'ai_twin.php'); ?>">
+                        <span class="nav-tab-idx">03</span> Crops &amp; AI Twin
+                    </a>
+                    <a href="<?php echo base_url('inventory.php'); ?>" class="<?php echo active_nav('inventory.php', 'inventory_add.php', 'inputs.php', 'input_add.php'); ?>">
+                        <span class="nav-tab-idx">04</span> Inventory
+                    </a>
+                    <a href="<?php echo base_url('livestock.php'); ?>" class="<?php echo active_nav('livestock.php', 'livestock_add.php', 'livestock_edit.php'); ?>">
+                        <span class="nav-tab-idx">05</span> Livestock
+                    </a>
+                    <a href="<?php echo base_url('activities.php'); ?>" class="<?php echo active_nav('activities.php'); ?>">
+                        <span class="nav-tab-idx">06</span> Activities
+                    </a>
+                    <a href="<?php echo base_url('finances.php'); ?>" class="<?php echo active_nav('finances.php', 'finance_add.php'); ?>">
+                        <span class="nav-tab-idx">07</span> Finances
+                    </a>
+                    <a href="<?php echo base_url('carbon.php'); ?>" class="<?php echo active_nav('carbon.php'); ?>">
+                        <span class="nav-tab-idx">08</span> Carbon
+                    </a>
+                    <a href="<?php echo base_url('tokens.php'); ?>" class="<?php echo active_nav('tokens.php'); ?>">
+                        <span class="nav-tab-idx">09</span> Tokens
+                    </a>
+                    <a href="<?php echo base_url('traceability.php'); ?>" class="<?php echo active_nav('traceability.php'); ?>">
+                        <span class="nav-tab-idx">10</span> Traceability
+                    </a>
+                    <a href="<?php echo base_url('workers.php'); ?>" class="<?php echo active_nav('workers.php', 'worker_points.php'); ?>">
+                        <span class="nav-tab-idx">11</span> Crew
+                    </a>
+                    <a href="<?php echo base_url('community.php'); ?>" class="<?php echo active_nav('community.php', 'community_post.php'); ?>">
+                        <span class="nav-tab-idx">12</span> Community
+                    </a>
+                </div>
+            </div>
+        </nav>
+        <?php endif; ?>
     </header>
 
     <!-- Main Content Container -->
