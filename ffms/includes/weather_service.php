@@ -175,11 +175,15 @@ function get_farm_weather(PDO $pdo, array $farm, bool $force_refresh = false): a
 
     // 6. No cache and no API: Graceful fallback with realistic Zambian agricultural climate baseline
     // Provides a helpful fallback observation card so the page never breaks
+    $notice = !empty($api_error)
+        ? 'OpenWeatherMap Notice: ' . sanitize($api_error) . ' (Waiting for key activation). Showing regional seasonal baseline for ' . sanitize($city) . '.'
+        : 'Weather API key not set or service offline. Showing regional seasonal baseline for ' . sanitize($city) . '.';
+
     return [
         'status'       => 'manual_fallback',
         'temp_c'       => 26.5,
         'feels_like_c' => 27.0,
-        'description'  => 'Partly Cloudy (Seasonal Estimate)',
+        'description'  => 'Partly Cloudy (Seasonal Baseline)',
         'humidity'     => 45,
         'wind_speed'   => 3.2,
         'rain_1h'      => 0.0,
@@ -188,6 +192,6 @@ function get_farm_weather(PDO $pdo, array $farm, bool $force_refresh = false): a
         'cache_age'    => 0,
         'is_stale'     => true,
         'source'       => 'estimate',
-        'notice'       => 'Weather API key not set or service offline. Showing regional seasonal baseline for ' . sanitize($city) . '.'
+        'notice'       => $notice
     ];
 }

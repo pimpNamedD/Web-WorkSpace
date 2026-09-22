@@ -377,16 +377,20 @@ include __DIR__ . '/includes/header.php';
                     </span>
                 </h3>
             </div>
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <?php if (!empty($weather_data['is_stale'])): ?>
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <?php if (!empty($weather_data['source']) && $weather_data['source'] === 'live_api'): ?>
+                    <span class="stamp-badge stamp-green">[ LIVE SATELLITE ]</span>
+                <?php elseif (!empty($weather_data['source']) && $weather_data['source'] === 'cache'): ?>
+                    <span class="stamp-badge stamp-navy">[ 30-MIN CACHED ]</span>
+                <?php elseif (!empty($weather_data['source']) && $weather_data['source'] === 'stale_cache'): ?>
                     <span class="stamp-badge stamp-amber">[ STALE OBSERVATION ]</span>
                 <?php else: ?>
-                    <span class="stamp-badge stamp-navy">[ 30-MIN CACHED ]</span>
+                    <span class="stamp-badge stamp-ochre">[ REGIONAL BASELINE ]</span>
                 <?php endif; ?>
                 
                 <?php if (count($farms) > 1): ?>
                 <form method="GET" action="dashboard.php" style="display: inline-block;">
-                    <select name="farm_id" onchange="this.form.submit()" class="form-control" style="padding: 4px 8px; font-size: 12px; font-family: var(--font-mono);">
+                    <select name="farm_id" onchange="this.form.submit()" class="form-control-sm">
                         <?php foreach ($farms as $fm): ?>
                         <option value="<?php echo (int)$fm['id']; ?>" <?php echo ($fm['id'] === $active_farm['id']) ? 'selected' : ''; ?>>
                             <?php echo sanitize($fm['farm_name']); ?>
@@ -396,7 +400,7 @@ include __DIR__ . '/includes/header.php';
                 </form>
                 <?php endif; ?>
 
-                <a href="weather_ajax.php?farm_id=<?php echo (int)$active_farm['id']; ?>" class="ledger-btn ledger-btn-sm" title="Refresh reading from OpenWeatherMap">
+                <a href="weather_ajax.php?farm_id=<?php echo (int)$active_farm['id']; ?>&redirect=dashboard.php" class="ledger-btn ledger-btn-sm" title="Refresh reading from OpenWeatherMap">
                     Refresh
                 </a>
             </div>
@@ -433,6 +437,12 @@ include __DIR__ . '/includes/header.php';
                 </div>
             </div>
         </div>
+
+        <?php if (!empty($weather_data['notice'])): ?>
+        <div style="font-size: 11.5px; color: var(--stamp-amber); margin-top: 12px; font-family: var(--font-mono); border-top: 1px dashed var(--border-rule); padding-top: 8px;">
+            &bull; <?php echo sanitize($weather_data['notice']); ?>
+        </div>
+        <?php endif; ?>
     </div>
     <?php endif; ?>
 

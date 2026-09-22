@@ -27,13 +27,13 @@ return [
      *   the last cached reading (marked "STALE") or a clean manual notice.
      */
     'weather' => [
-        // Replace with your free OpenWeatherMap API key (32-character hex string)
-        'api_key'        => getenv('OWM_API_KEY') ?: '',
-        'base_url'       => 'https://api.openweathermap.org/data/2.5/weather',
-        'cache_seconds'  => 1800, // 30 minutes
-        'default_country'=> 'ZM', // Zambia
-        'default_city'   => 'Lusaka',
-        'units'          => 'metric', // Celsius, m/s
+        // OpenWeatherMap API key (Free tier - 1,000 calls/day)
+        'api_key' => getenv('OWM_API_KEY') ?: '0118aaf167b542a140fbdb221dbb7af4',
+        'base_url' => 'https://api.openweathermap.org/data/2.5/weather',
+        'cache_seconds' => 3600, // 60 minutes
+        'default_country' => 'ZM', // Zambia
+        'default_city' => 'Lusaka',
+        'units' => 'metric', // Celsius, m/s
     ],
 
     /**
@@ -51,13 +51,13 @@ return [
      *   - API Key (generated via /v1_0/apiuser/{id}/apikey)
      */
     'mtn_momo' => [
-        'enabled'          => true,
-        'environment'      => 'sandbox',
+        'enabled' => true,
+        'environment' => 'sandbox',
         'subscription_key' => getenv('MTN_MOMO_SUB_KEY') ?: '',
-        'api_user_id'      => getenv('MTN_MOMO_USER_ID') ?: '',
-        'api_key'          => getenv('MTN_MOMO_API_KEY') ?: '',
-        'base_url'         => 'https://sandbox.momodeveloper.mtn.com',
-        'currency'         => 'EUR', // MTN sandbox standard test currency (or ZMW in production)
+        'api_user_id' => getenv('MTN_MOMO_USER_ID') ?: '',
+        'api_key' => getenv('MTN_MOMO_API_KEY') ?: '',
+        'base_url' => 'https://sandbox.momodeveloper.mtn.com',
+        'currency' => 'EUR', // MTN sandbox standard test currency (or ZMW in production)
         // Set to true to allow local testing and demonstration even before registering API keys:
         'simulate_sandbox' => true,
     ],
@@ -74,13 +74,13 @@ return [
      *   - Client ID & Client Secret
      */
     'airtel_money' => [
-        'enabled'          => true,
-        'environment'      => 'sandbox',
-        'client_id'        => getenv('AIRTEL_CLIENT_ID') ?: '',
-        'client_secret'    => getenv('AIRTEL_CLIENT_SECRET') ?: '',
-        'base_url'         => 'https://openapiuat.airtel.africa',
-        'country_code'     => 'ZM',
-        'currency'         => 'ZMW',
+        'enabled' => true,
+        'environment' => 'sandbox',
+        'client_id' => getenv('AIRTEL_CLIENT_ID') ?: '',
+        'client_secret' => getenv('AIRTEL_CLIENT_SECRET') ?: '',
+        'base_url' => 'https://openapiuat.airtel.africa',
+        'country_code' => 'ZM',
+        'currency' => 'ZMW',
         // Set to true to allow local testing and demonstration even before registering API keys:
         'simulate_sandbox' => true,
     ],
@@ -91,10 +91,10 @@ return [
      * ========================================================================
      */
     'app' => [
-        'name'        => 'FFMS (Field Ledger)',
-        'tagline'     => 'Farm Management & Crop Logbook for Zambian Agriculture',
-        'currency'    => 'ZMW',
-        'symbol'      => 'K',
-        'version'     => '1.0.0',
+        'name' => 'FFMS (Field Ledger)',
+        'tagline' => 'Farm Management & Crop Logbook for Zambian Agriculture',
+        'currency' => 'ZMW',
+        'symbol' => 'K',
+        'version' => '1.0.0',
     ]
 ];

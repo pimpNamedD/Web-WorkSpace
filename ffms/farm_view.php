@@ -102,11 +102,15 @@ include __DIR__ . '/includes/header.php';
                     Station: <?php echo sanitize($weather_data['city']); ?>, ZM
                 </h3>
             </div>
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <?php if (!empty($weather_data['is_stale'])): ?>
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <?php if (!empty($weather_data['source']) && $weather_data['source'] === 'live_api'): ?>
+                    <span class="stamp-badge stamp-green">[ LIVE SATELLITE ]</span>
+                <?php elseif (!empty($weather_data['source']) && $weather_data['source'] === 'cache'): ?>
+                    <span class="stamp-badge stamp-navy">[ 30-MIN CACHED ]</span>
+                <?php elseif (!empty($weather_data['source']) && $weather_data['source'] === 'stale_cache'): ?>
                     <span class="stamp-badge stamp-amber">[ STALE OBSERVATION ]</span>
                 <?php else: ?>
-                    <span class="stamp-badge stamp-navy">[ 30-MIN CACHED ]</span>
+                    <span class="stamp-badge stamp-ochre">[ REGIONAL BASELINE ]</span>
                 <?php endif; ?>
                 <a href="weather_ajax.php?farm_id=<?php echo (int)$farm['id']; ?>&redirect=farm_view.php?id=<?php echo (int)$farm['id']; ?>" class="ledger-btn ledger-btn-sm">
                     Refresh
