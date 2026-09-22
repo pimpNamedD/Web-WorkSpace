@@ -17,7 +17,7 @@ login_required();
 $user = current_user();
 $user_id = $user['id'];
 
-$farm_id = (int)($_GET['farm_id'] ?? 0);
+$farm_id = (int) ($_GET['farm_id'] ?? 0);
 $redirect = trim($_GET['redirect'] ?? '');
 
 // Verify farm holding ownership
