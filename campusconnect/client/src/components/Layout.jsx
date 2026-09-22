@@ -4,6 +4,7 @@ import { api } from '../lib/api.js';
 import { useAuth } from '../lib/store.jsx';
 import { TYPE_ICONS, TYPE_LABELS, timeAgo } from '../lib/format.js';
 import { Avatar, VerifiedBadge } from './ui.jsx';
+import ccLogo from '../assets/cc-logo.svg';
 
 const MODULES = ['marketplace', 'accommodation', 'tutor', 'job', 'roommate', 'lostfound'];
 
@@ -83,9 +84,8 @@ function AccountMenu() {
 
   return (
     <div className="menu-wrap" ref={ref}>
-      <button className="avatar" onClick={() => setOpen(!open)} aria-label="Account menu">
-        {user.avatar_url ? <img className="avatar" src={user.avatar_url} alt="" /> : null}
-        {!user.avatar_url && user.full_name.split(' ').map((w) => w[0]).slice(0, 2).join('')}
+      <button className="avatar-btn" onClick={() => setOpen(!open)} aria-label="Account menu" title={user.full_name}>
+        <Avatar user={user} />
       </button>
       {open && (
         <div className="dropdown" onClick={() => setOpen(false)}>
@@ -129,9 +129,9 @@ export default function Layout() {
     <>
       <header className="site-header">
         <div className="container bar">
-          <Link to="/" className="brand">
-            <span className="mark">CC</span>
-            <span>Campus Connect</span>
+          <Link to="/" className="brand" aria-label="Campus Connect">
+            <img src={ccLogo} alt="Campus Connect" className="brand-logo" />
+            <span className="brand-name">Campus Connect</span>
           </Link>
 
           <nav className={`nav-links ${navOpen ? 'open' : ''}`}>
@@ -142,26 +142,19 @@ export default function Layout() {
             ))}
           </nav>
 
-          <form onSubmit={submitSearch} className="row" style={{ flex: '0 1 210px' }}>
+          <form onSubmit={submitSearch} className="header-search">
             <input
               value={term}
               onChange={(e) => setTerm(e.target.value)}
               placeholder="Search everything…"
               aria-label="Search all listings"
-              style={{ fontSize: '.85rem', padding: '.42rem .6rem' }}
             />
           </form>
 
           <div className="header-actions">
-            <button
-              className="icon-btn mobile-toggle"
-              onClick={() => setNavOpen(!navOpen)}
-              aria-label="Toggle navigation"
-            >☰</button>
-
             {user ? (
               <>
-                <Link to="/post" className="btn primary sm">+ Post</Link>
+                <Link to="/post" className="btn primary sm post-btn">+ Post</Link>
                 <Link to="/dashboard/messages" className="icon-btn" title="Messages" aria-label="Messages">
                   ✉️
                   {counts.messages > 0 && <span className="badge-dot">{counts.messages > 9 ? '9+' : counts.messages}</span>}
@@ -175,6 +168,12 @@ export default function Layout() {
                 <Link to="/register" className="btn primary sm">Register</Link>
               </>
             )}
+
+            <button
+              className="icon-btn mobile-toggle"
+              onClick={() => setNavOpen(!navOpen)}
+              aria-label="Toggle navigation"
+            >☰</button>
           </div>
         </div>
       </header>
@@ -184,10 +183,13 @@ export default function Layout() {
       <footer className="site-footer">
         <div className="container">
           <div className="spread">
-            <div>
-              <strong style={{ color: 'var(--ink)' }}>Campus Connect</strong>
-              <div>University Student Marketplace and Services Management System</div>
-              <div className="small">University of Lusaka · Bachelor of Information Technology final-year project</div>
+            <div className="footer-brand-wrap">
+              <img src={ccLogo} alt="Campus Connect" className="footer-logo" />
+              <div>
+                <strong style={{ color: 'var(--ink)' }}>Campus Connect</strong>
+                <div>University Student Marketplace and Services Management System</div>
+                <div className="small">University of Lusaka · Bachelor of Information Technology final-year project</div>
+              </div>
             </div>
             <div className="row-wrap small">
               {MODULES.map((m) => <Link key={m} to={`/browse/${m}`}>{TYPE_LABELS[m]}</Link>)}
