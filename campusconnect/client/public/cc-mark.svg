@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="280 80 240 205" width="100%" height="100%">
+  <defs>
+    <!-- Background subtle gradient -->
+    <linearGradient id="bgGradMark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0A0E1A" />
+      <stop offset="100%" stop-color="#121829" />
+    </linearGradient>
+
+    <!-- Node 1: Vibrant Cyan (Connectivity / Tech) -->
+    <linearGradient id="cyanGradMark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F2FE" />
+      <stop offset="100%" stop-color="#4FACFE" />
+    </linearGradient>
+
+    <!-- Node 2: Electric Indigo (Academic / Knowledge) -->
+    <linearGradient id="indigoGradMark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7F00FF" />
+      <stop offset="100%" stop-color="#E100FF" />
+    </linearGradient>
+
+    <!-- Node 3: Neon Amber (Commerce / Exchange / Community) -->
+    <linearGradient id="amberGradMark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFB300" />
+      <stop offset="100%" stop-color="#F77737" />
+    </linearGradient>
+
+    <!-- Center Bridge Gradient -->
+    <linearGradient id="bridgeGradMark" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00F2FE" />
+      <stop offset="50%" stop-color="#7F00FF" />
+      <stop offset="100%" stop-color="#FFB300" />
+    </linearGradient>
+
+    <!-- Glow Filter -->
+    <filter id="glowMark" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect x="280" y="80" width="240" height="205" rx="28" fill="url(#bgGradMark)" />
+
+  <!-- ==================== LOGOMARK ==================== -->
+  <g transform="translate(0, -10)">
+    <!-- Connection Arc Backdrops (Glow trails) -->
+    <g stroke-linecap="round" opacity="0.4" filter="url(#glowMark)">
+      <path d="M 330 220 C 340 160, 360 135, 400 135" fill="none" stroke="url(#cyanGradMark)" stroke-width="4" stroke-dasharray="6 6" />
+      <path d="M 400 135 C 440 135, 460 160, 470 220" fill="none" stroke="url(#indigoGradMark)" stroke-width="4" stroke-dasharray="6 6" />
+      <path d="M 330 220 C 350 270, 450 270, 470 220" fill="none" stroke="url(#amberGradMark)" stroke-width="4" />
+    </g>
+
+    <!-- Primary Architectural Network Paths -->
+    <path d="M 330 220 C 345 155, 365 135, 400 135" fill="none" stroke="url(#cyanGradMark)" stroke-width="3.5" />
+    <path d="M 400 135 C 435 135, 455 155, 470 220" fill="none" stroke="url(#indigoGradMark)" stroke-width="3.5" />
+    <path d="M 330 220 Q 400 245, 470 220" fill="none" stroke="url(#bridgeGradMark)" stroke-width="3" stroke-linecap="round" />
+
+    <!-- Node 1: Top (Mortarboard) -->
+    <g transform="translate(400, 135)">
+      <circle r="22" fill="#0A0E1A" stroke="url(#cyanGradMark)" stroke-width="3" />
+      <circle r="30" fill="none" stroke="#00F2FE" stroke-width="1" opacity="0.25" />
+      <path d="M 0 -8 L 13 -2 L 0 4 L -13 -2 Z" fill="url(#cyanGradMark)" />
+      <path d="M -8 1 L -8 7 C -8 9.5, 8 9.5, 8 7 L 8 1" fill="none" stroke="url(#cyanGradMark)" stroke-width="1.8" stroke-linecap="round" />
+      <path d="M 10 0 L 13 8" fill="none" stroke="#00F2FE" stroke-width="1.5" stroke-linecap="round" />
+      <circle cx="13" cy="9" r="1" fill="#00F2FE" />
+    </g>
+
+    <!-- Node 2: Left (Shopping Bag) -->
+    <g transform="translate(330, 220)">
+      <circle r="22" fill="#0A0E1A" stroke="url(#amberGradMark)" stroke-width="3" />
+      <circle r="30" fill="none" stroke="#FFB300" stroke-width="1" opacity="0.25" />
+      <rect x="-7.5" y="-3.5" width="15" height="14" rx="2.5" fill="url(#amberGradMark)" />
+      <path d="M -4 -3.5 L -4 -6 C -4 -8.5, 4 -8.5, 4 -6 L 4 -3.5" fill="none" stroke="#FFB300" stroke-width="1.8" stroke-linecap="round" />
+      <circle cx="0" cy="3.5" r="2.2" fill="#0A0E1A" />
+    </g>
+
+    <!-- Node 3: Right (Student Profile) -->
+    <g transform="translate(470, 220)">
+      <circle r="22" fill="#0A0E1A" stroke="url(#indigoGradMark)" stroke-width="3" />
+      <circle r="30" fill="none" stroke="#E100FF" stroke-width="1" opacity="0.25" />
+      <circle cx="0" cy="-3.5" r="4.5" fill="url(#indigoGradMark)" />
+      <path d="M -7.5 9 C -7.5 4.5, 7.5 4.5, 7.5 9" fill="none" stroke="url(#indigoGradMark)" stroke-width="2.2" stroke-linecap="round" />
+    </g>
+
+    <!-- Central Nexus -->
+    <circle cx="400" cy="200" r="4" fill="#FFFFFF" filter="url(#glowMark)" />
+    <circle cx="400" cy="200" r="1.5" fill="#0A0E1A" />
+  </g>
+</svg>
